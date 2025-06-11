@@ -13,6 +13,10 @@ import { registerLocaleData } from '@angular/common';
 import localeEsCl from '@angular/common/locales/es-CL';
 import { DefaultPipe } from './shared/image.pipe';
 import { HttpClientModule } from '@angular/common/http';
+import { ModalAddComponent } from './services/modal-add/modal-add.component';
+import { WelcomeComponent } from './welcome/welcome.component';
+import { PageNotFoundComponent } from './page-not-found/page-not-found.component';
+import { RouterModule } from '@angular/router';
 
 
 
@@ -26,6 +30,9 @@ registerLocaleData(localeEsCl, 'es-CL');
     StarComponent,
     SumasComponent,
     DefaultPipe,
+    ModalAddComponent,
+    WelcomeComponent,
+    PageNotFoundComponent,
   ],
   imports: [
     BrowserModule,
@@ -33,7 +40,13 @@ registerLocaleData(localeEsCl, 'es-CL');
     NgxBootstrapIconsModule.pick(allIcons),
     FormsModule,
     HttpClientModule,
-    ReactiveFormsModule
+    ReactiveFormsModule,
+    RouterModule.forRoot([
+      {path: 'product/product-list', component: ProductListComponent},
+      {path: 'welcome', component: WelcomeComponent},
+      {path: '', redirectTo: 'welcome', pathMatch: 'full'},
+      {path: '**', component: PageNotFoundComponent}
+    ])
   ],
   providers: [{provide: LOCALE_ID, useValue: 'es-CL'}],
   bootstrap: [AppComponent]

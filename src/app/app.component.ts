@@ -2,22 +2,25 @@ import { Component } from '@angular/core';
 import { allIcons, image } from 'ngx-bootstrap-icons';
 import { IProduct } from './product';
 import { ProductService } from './product/product.service';
-
+import { ModalAddService } from './services/modal-add.service';
+import { Router } from '@angular/router';
 
 @Component({
   selector: 'app-root',
   templateUrl: './app.component.html',
   styleUrl: './app.component.css'
+  //providers: [ProductService]
 })
 export class AppComponent  {
-  constructor(private productService: ProductService) {}
+  
+  constructor(private productService: ProductService, private modalAddService: ModalAddService, private router:Router) {}
   title = 'EmpresaACME';
    _listFilter: string = ' ';
-   filteredProducts: IProduct[] = [];
-   products: IProduct[] = [];
+   //filteredProducts: IProduct[] = [];
+   //products: IProduct[];
 
 
-  /*
+/*
   products:IProduct[]=[
     {
       "productID":1,
@@ -82,29 +85,28 @@ export class AppComponent  {
     },
 
 
-  ]
-    */
+  ]*/
   get listFilter(): string{
     return this._listFilter;
   }
   set listFilter(value: string) {
      this._listFilter = value;
-   this.filteredProducts=
+   this.productService.filteredProducts=
        this.listFilter ? this.performFilter(this.listFilter):
-       this.products;
+       this.productService.products;
   }
   performFilter(filterBy: string): IProduct[]{
     filterBy = filterBy.toLowerCase();
-    return this.products.filter((products: IProduct)=> products.productName.toLowerCase().indexOf(filterBy)!==-1)
+    return this.productService.products.filter((products: IProduct)=> products.productName.toLowerCase().indexOf(filterBy)!==-1)
   }
 
   
   ngOnInit(): void {
   this.productService.getProducts().subscribe(
     (res: any) => {
-      this.products = res;
-      this.filteredProducts = res;
-      console.log(this.products);
+      this.productService.products = res;
+      this.productService.filteredProducts = res;
+      console.log(this.productService.products);
     },
     err => console.log(err)
   );
@@ -124,14 +126,19 @@ export class AppComponent  {
   guardarProducto(producto: IProduct){
     this.productService.saveProduct(producto).subscribe(() =>{
       return this.productService.getProducts().subscribe((res:any[])=>{
-        this.products = res;
-        this.filteredProducts = res;
+        this.productService.products = res;
+        this.productService.filteredProducts = res;
       },
         err => console.log(err));
     })
   }
   
- 
+  abrirModal(){
+    this.modalAddService.mostrarModal();
+  }
+  navegar(){
+    this.router.navigate(['product/product-list']);
+  }
 
   
   

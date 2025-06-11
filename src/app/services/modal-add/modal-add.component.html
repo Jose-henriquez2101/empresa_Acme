@@ -1,0 +1,77 @@
+<!-- The Modal -->
+<div class="modal" [ngStyle]="{'display':modalAddService.oculto}" tabindex="-1" role="dialog">
+  <div class="modal-dialog">
+    <div class="modal-content">
+      <form [formGroup]="formProduct" (ngSubmit)="saveData()" novalidate>
+
+      <!-- Modal Header -->
+      <div class="modal-header">
+        <h4 class="modal-title">Crear Producto</h4>
+        <button (click)="ocultarModal()" type="button" class="close" data-dismiss="modal">&times;</button>
+      </div>
+
+      <!-- Modal body -->
+      <div class="modal-body">
+        <!-- Nombre del producto -->
+        <div class="form-group row">
+            <label class="col-2 col-form-label">Nombre</label>
+            <div class="col-8">
+                <input formControlName="name" class="form-control" type="text" placeholder="Nombre">
+            </div>
+        </div>
+        <!-- Fecha del registro -->
+         <div class="form-group row">
+            <label class="col-2 col-form-label">Fecha</label>
+             <div class="col-md-8">
+                <input formControlName="date" class="form-control" type="date" placeholder="Fecha">
+            </div>
+         </div>
+         <!-- Precio del producto -->
+          <div class="form-group row">
+            <label class="col-2 col-form-label">Precio</label>
+             <div class="col-md-8">
+                <input formControlName="price" class="form-control" type="number" placeholder="Precio">
+            </div>
+         </div>
+         <!--Codigo del producto-->
+         <div class="form-group row">
+            <label class="col-2 col-form-label">Codigo</label>
+             <div class="col-md-8">
+                <input formControlName="code" class="form-control" type="text" placeholder="Código">
+                <span *ngIf="formProduct.get('code')?.pending">(buscando...)</span>
+                <div *ngIf="formProduct.get('code')?.errors && formProduct.get('code')?.errors?.['existe']" class="alert alert-danger" >
+                  El Código ya existe
+                </div>
+            </div>
+         </div>
+         <!-- Descripcion del producto -->
+          <div class="form-group row">
+            <label class="col-2 col-form-label">Descripción</label>
+             <div class="col-md-8">
+                <input formControlName="description" class="form-control" type="text" placeholder="Descripción">
+            </div>
+         </div>
+         <!-- Rating del producto -->
+          <div class="form-group row">
+            <label class="col-2 col-form-label">Rating</label>
+             <div class="col-md-8">
+                <input formControlName="starRating" class="form-control" type="number" placeholder="rating">
+            </div>
+         </div>
+      </div>
+
+      <!-- Modal footer -->
+      <div class="modal-footer">
+        <button type="submit" [disabled]="!formProduct.valid" class="btn btn-primary">Guardar</button>
+        <button (click)="ocultarModal()" type="button" class="btn btn-danger">Cerrar</button>
+      </div>
+      </form>
+    </div>
+  </div>
+</div>
+
+<!-- 
+[ngStyle]="{'display':modalAddService.oculto}"
+(click)="ocultarModal()"
+-->
+

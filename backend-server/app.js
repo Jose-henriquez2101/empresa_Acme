@@ -3,6 +3,8 @@ const mysql = require('mysql');
 const bodyParser = require('body-parser');
 const fileUpload = require('express-fileupload');
 const cors = require('cors');
+const bcrypt = require('bcrypt');
+var jwt = require('jsonwebtoken');
 
 var app =  express();
 
@@ -160,4 +162,108 @@ app.get('/existeproducto/:id', (req, res, next)=>{
       message: 'Producto existe'
     });
   });
+});
+
+// CORS Middleware
+app.use('/', (req, res, next) => {
+    let token = req.query.token; // Obtener token desde query params
+    let SEED = 'esta-es-una-semilla'; // Semilla para firmar/verificar tokens
+    
+    console.log('Token recibido:', token); // Depuración
+
+    jwt.verify(token, SEED, (err, decoded) => {
+        if (err) {
+            return res.status(401).json({
+                ok: false,
+                mensaje: 'Token incorrecto o expirado',
+                errors: err
+            });
+        }
+        
+        // Token válido: adjuntar datos decodificados a la request
+        req.usuario = decoded.usuario;
+        next(); // Continuar con la siguiente ruta/middleware
+    });
+});
+
+
+app.post('/usuario', function (req, res) {
+    let datosUsuario = {
+        userName: req.body.name,
+        userEmail: req.body.email,
+        userPassword: bcrypt.hashSync(req.body.password, 10),
+        userImg: req.body.img,
+        userRole: req.body.role
+    };
+
+
+    if (mc) {
+        mc.query("INSERT INTO usuarios SET ?", datosUsuario, function (error, result) {
+            if (error) {
+                return res.status(400).json({
+                    ok: false,
+                    mensaje: 'Error al crear usuario',
+                    errors: error
+                });
+            } else {
+                res.status(201).json({
+                    ok: true,
+                    usuario: result
+                });
+            }
+        });
+    } else {
+        res.status(500).json({
+            ok: false,
+            mensaje: 'Error de conexión a la base de datos'
+        });
+    }
+});
+
+
+app.post('/login', (req, res) => {
+    const body = req.body;
+
+    // 2. Buscar usuario en la base de datos
+    mc.query("SELECT * FROM usuarios WHERE userEmail = ?", [body.email], function (error, results, fields) {
+        // 3. Manejar errores de la consulta
+        if (error) {
+            return res.status(500).json({
+                ok: false,
+                mensaje: 'Error al buscar usuario',
+                errors: error
+            });
+        }
+
+        // 4. Verificar si el usuario existe
+        if (!results.length) {
+            return res.status(400).json({
+                ok: false,
+                mensaje: 'Credenciales incorrectas - email',
+                errors: error
+            });
+        }
+        console.log(results)
+
+        // 5. Comparar contraseñas
+        if (bcrypt.compareSync(body.password, results[0].userPassword)) {
+            //console.log(body.password);
+            //console.log(results[0].userPassword);
+            return res.status(400).json({
+                ok: false,
+                mensaje: 'Credenciales incorrectas - password',
+                errors: error
+            });
+        }
+
+        let SEED = 'esta-es-una-semilla';
+        let token = jwt.sign({ usuario: results[0].userPassword }, SEED, { expiresIn: 14400});
+        // 6. Login exitoso
+        res.status(200).json({
+            ok: true,
+            usuario: results,
+            id: results[0].userId,
+            token: token
+        });
+    });
 });

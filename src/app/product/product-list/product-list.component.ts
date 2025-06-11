@@ -9,7 +9,7 @@ import { ProductService } from '../product.service';
 })
 export class ProductListComponent implements OnInit{
 
-    @Input('datos') public products!:IProduct[];
+    //@Input('datos') public products!:IProduct[];
     imagenWidht: number = 50;
     imagenMargin: number = 10;
     showImage: boolean = false;
@@ -19,8 +19,8 @@ export class ProductListComponent implements OnInit{
     deleteProduct(id:number){
       this.productService.deleteProduct(id).subscribe(() => {
         return this.productService.getProducts().subscribe((res: any[])=>{
-          this.products = res;
-          //this.filteredProducts = res;
+          this.productService.products = res;
+          this.productService.filteredProducts = res;
         },
         err => console.log(err));
       })
@@ -38,8 +38,8 @@ export class ProductListComponent implements OnInit{
 
     this.productService.updateProduct(id, datos).subscribe(() => {
         return this.productService.getProducts().subscribe((res: any[]) => {
-            this.products = res;
-            //this.filteredProducts = res;
+            this.productService.products = res;
+            this.productService.filteredProducts = res;
           },
           err => console.log(err)
         );

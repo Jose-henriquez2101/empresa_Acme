@@ -3,7 +3,7 @@
   <div class="card-body text-primary">
 
     <div class="table-responsive">
-      <table class="table" *ngIf="this.products && this.products.length">
+      <table class="table" *ngIf="this.productService.products && this.productService.products.length">
         <thead>
           <tr>
             <th>
@@ -19,7 +19,7 @@
           <th>Rating</th>
           </tr>
         </thead>
-        <tr *ngFor="let Product of products">
+        <tr *ngFor="let Product of this.productService.filteredProducts">
           <td> 
             <img *ngIf="showImage"
               [src]="Product.imageUrl | default:'../../assets/sin-imagen.png'"
@@ -36,6 +36,7 @@
             <button class="btn btn-success" (click)="viewProduct(Product)">
               <i class="fa fa-eye"></i> Ver              
             </button>
+            &nbsp;
             <button class="btn btn-warning" (click)="updateProduct(Product.productID, Product)">
               <i class="fas fa-pencil-alt"></i> Editar              
             </button>

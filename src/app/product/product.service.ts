@@ -9,6 +9,9 @@ import { map } from 'rxjs/operators';
 })
 
 export class ProductService {
+  filteredProducts: IProduct[] = [];
+  public products: IProduct[]= [];
+
 
   constructor(private http: HttpClient) { }
 
@@ -41,6 +44,9 @@ export class ProductService {
 
   updateProduct(id: number, product: any) {
     return this.http.put('http://localhost:3000/productos/' + id, product);
+  }
+  searchProduct(code:any){
+    return this.http.get<any>('http://localhost:3000/existeproducto/'+code).pipe(map((res:any)=>res.data));
   }
 
 }
