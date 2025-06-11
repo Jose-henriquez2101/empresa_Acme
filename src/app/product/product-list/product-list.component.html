@@ -1,0 +1,56 @@
+<div class="card border-primary mb-3 text-center">
+  <div class="card-header">Lista de Productos</div>
+  <div class="card-body text-primary">
+
+    <div class="table-responsive">
+      <table class="table" *ngIf="this.products && this.products.length">
+        <thead>
+          <tr>
+            <th>
+            <button class="btn btn-primary"(click)="toggleImage()">
+              <i class="fa fa-eye"></i>
+              {{showImage? 'Ocultar ' : 'Mostrar '}} Imagenes
+            </button>
+          </th>
+          <th>Productos</th>
+          <th>Codigo</th>
+          <th>Disponible</th>
+          <th>Precio</th>
+          <th>Rating</th>
+          </tr>
+        </thead>
+        <tr *ngFor="let Product of products">
+          <td> 
+            <img *ngIf="showImage"
+              [src]="Product.imageUrl | default:'../../assets/sin-imagen.png'"
+              [title]="Product.productName | uppercase"
+              [style.width.px]="imagenWidht"
+              [style.margin.px]="imagenMargin">
+          </td>
+          <td>{{Product.productName}}</td>
+          <td>{{Product.productCode}}</td>
+          <td>{{Product.releaseDate | date:'fullDate'}}</td>
+          <td>{{Product.price | currency:'EUR':true:'1.2-2'}}</td>
+          <td><app-star [rating]="Product.starRating"></app-star></td>
+          <td>
+            <button class="btn btn-success" (click)="viewProduct(Product)">
+              <i class="fa fa-eye"></i> Ver              
+            </button>
+            <button class="btn btn-warning" (click)="updateProduct(Product.productID, Product)">
+              <i class="fas fa-pencil-alt"></i> Editar              
+            </button>
+            &nbsp;
+            <button class="btn btn-danger" (click)="deleteProduct(Product.productID)">
+              <i class="fas fa-trash-alt"></i> Borrar              
+            </button>
+          </td>
+        </tr>
+        <tr>
+
+        </tr>
+      </table>
+    </div>
+
+
+  </div>
+</div>
