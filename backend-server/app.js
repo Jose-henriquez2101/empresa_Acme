@@ -165,26 +165,37 @@ app.get('/existeproducto/:id', (req, res, next)=>{
 });
 
 // CORS Middleware
-app.use('/', (req, res, next) => {
-    let token = req.query.token; // Obtener token desde query params
-    let SEED = 'esta-es-una-semilla'; // Semilla para firmar/verificar tokens
-    
-    console.log('Token recibido:', token); // Depuración
+app.use(function (req, res, next) {
+  const rutasPublicas = ['/usuario', '/login', '/'];
+  if (rutasPublicas.includes(req.path)) {
+    return next();
+  }
 
-    jwt.verify(token, SEED, (err, decoded) => {
-        if (err) {
-            return res.status(401).json({
-                ok: false,
-                mensaje: 'Token incorrecto o expirado',
-                errors: err
-            });
-        }
-        
-        // Token válido: adjuntar datos decodificados a la request
-        req.usuario = decoded.usuario;
-        next(); // Continuar con la siguiente ruta/middleware
+  let token = req.query.token;
+  let SEED = 'esta-es-una-semilla';
+
+  if (!token) {
+    return res.status(401).json({
+      ok: false,
+      mensaje: 'Token no proporcionado',
+      errors: { message: 'jwt must be provided' }
     });
+  }
+
+  jwt.verify(token, SEED, (err, decoded) => {
+    if (err) {
+      return res.status(401).json({
+        ok: false,
+        mensaje: 'Token incorrecto',
+        errors: err
+      });
+    }
+
+    req.usuario = decoded.usuario;
+    next();
+  });
 });
+
 
 
 app.post('/usuario', function (req, res) {
@@ -222,48 +233,44 @@ app.post('/usuario', function (req, res) {
 
 
 app.post('/login', (req, res) => {
-    const body = req.body;
+  var body = req.body;
 
-    // 2. Buscar usuario en la base de datos
-    mc.query("SELECT * FROM usuarios WHERE userEmail = ?", [body.email], function (error, results, fields) {
-        // 3. Manejar errores de la consulta
-        if (error) {
-            return res.status(500).json({
-                ok: false,
-                mensaje: 'Error al buscar usuario',
-                errors: error
-            });
-        }
+  mc.query("SELECT * FROM usuarios WHERE userEmail = ?", body.email, function (error, results, fields) {
+    if (error) {
+      return res.status(500).json({
+        ok: false,
+        mensaje: 'Error al buscar usuario',
+        errors: error
+      });
+    }
 
-        // 4. Verificar si el usuario existe
-        if (!results.length) {
-            return res.status(400).json({
-                ok: false,
-                mensaje: 'Credenciales incorrectas - email',
-                errors: error
-            });
-        }
-        console.log(results)
+    if (!results.length) {
+      return res.status(400).json({
+        ok: false,
+        mensaje: 'Credenciales incorrectas - email',
+        errors: error
+      });
+    }
 
-        // 5. Comparar contraseñas
-        if (bcrypt.compareSync(body.password, results[0].userPassword)) {
-            //console.log(body.password);
-            //console.log(results[0].userPassword);
-            return res.status(400).json({
-                ok: false,
-                mensaje: 'Credenciales incorrectas - password',
-                errors: error
-            });
-        }
+    console.log(results);
+    console.log(results[0].userPassword);
+    console.log(body.password);
 
-        let SEED = 'esta-es-una-semilla';
-        let token = jwt.sign({ usuario: results[0].userPassword }, SEED, { expiresIn: 14400});
-        // 6. Login exitoso
-        res.status(200).json({
-            ok: true,
-            usuario: results,
-            id: results[0].userId,
-            token: token
-        });
+    if (bcrypt.compareSync(body.password, results[0].userPassword)) {
+      return res.status(400).json({
+        ok: false,
+        mensaje: 'Credenciales incorrectas - password',
+        errors: error
+      });
+    }
+    let SEED = 'este-es-una-semilla';
+    let token = jwt.sign({ usuario: results[0] }, SEED, { expiresIn: 14400 });
+
+    res.status(200).json({
+      ok: true,
+      usuario: results,
+      id: results[0].userId,
+      token: token
     });
+  });
 });
