@@ -4,6 +4,7 @@ import { IProduct } from './product';
 import { ProductService } from './product/product.service';
 import { ModalAddService } from './services/modal-add.service';
 import { Router } from '@angular/router';
+import { LoginService } from './services/login/login.service';
 
 @Component({
   selector: 'app-root',
@@ -13,7 +14,7 @@ import { Router } from '@angular/router';
 })
 export class AppComponent  {
   
-  constructor(private productService: ProductService, private modalAddService: ModalAddService, private router:Router) {}
+  constructor(private productService: ProductService, private modalAddService: ModalAddService, private router:Router, public loginservice: LoginService) {}
   title = 'EmpresaACME';
    _listFilter: string = ' ';
    //filteredProducts: IProduct[] = [];

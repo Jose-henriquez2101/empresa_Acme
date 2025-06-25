@@ -9,7 +9,7 @@ import { Router } from '@angular/router';
 export class LoginService {
     public logueado: boolean = false;
 
-    constructor(private http: HttpClient) {}
+    constructor(private http: HttpClient, private router: Router) { }
 
     public login(email:any, password:any) {
     let userLogin = { email: email, password: password };
@@ -17,6 +17,8 @@ export class LoginService {
         map((res: any) => {
             localStorage.setItem('token', res.token);
             localStorage.setItem('usuario', JSON.stringify(res.usuario));
+            this.logueado = true;
+            this.router.navigate(['welcome']);
             return res;
         })
     );
@@ -24,6 +26,8 @@ export class LoginService {
   public logout() {
     localStorage.removeItem('token');
     localStorage.removeItem('usuario');
+    this.logueado = false;
+    this.router.navigate(['login']);
   }
   public loggedIn(): boolean {
     return localStorage.getItem('token') !== null;
