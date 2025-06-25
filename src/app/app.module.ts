@@ -17,6 +17,7 @@ import { ModalAddComponent } from './services/modal-add/modal-add.component';
 import { WelcomeComponent } from './welcome/welcome.component';
 import { PageNotFoundComponent } from './page-not-found/page-not-found.component';
 import { RouterModule } from '@angular/router';
+import { LoginComponent } from './login/login.component';
 
 
 
@@ -33,6 +34,7 @@ registerLocaleData(localeEsCl, 'es-CL');
     ModalAddComponent,
     WelcomeComponent,
     PageNotFoundComponent,
+    LoginComponent,
   ],
   imports: [
     BrowserModule,
@@ -44,8 +46,10 @@ registerLocaleData(localeEsCl, 'es-CL');
     RouterModule.forRoot([
       {path: 'product/product-list', component: ProductListComponent},
       {path: 'welcome', component: WelcomeComponent},
-      {path: '', redirectTo: 'welcome', pathMatch: 'full'},
-      {path: '**', component: PageNotFoundComponent}
+      {path: 'login', component: LoginComponent},
+      {path: '', redirectTo: 'login', pathMatch: 'full'},
+      {path: '**', component: PageNotFoundComponent},
+      
     ])
   ],
   providers: [{provide: LOCALE_ID, useValue: 'es-CL'}],

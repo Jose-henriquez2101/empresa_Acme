@@ -16,9 +16,10 @@ export class ProductService {
   constructor(private http: HttpClient) { }
 
   getProducts(): Observable<IProduct[]> {
-    return this.http.get<IProduct[]>('http://localhost:3000/productos').pipe(
-      map((res: any) => res.data)
-    );
+    console.log(localStorage.getItem('token'));
+    let token = localStorage.getItem('token');
+    return this.http.get<IProduct[]>(`http://localhost:3000/products?token=${token}`)
+        .pipe(map((res: any) => res.data));
   }
 
   rand_code(chars: string, lon: number): string {
