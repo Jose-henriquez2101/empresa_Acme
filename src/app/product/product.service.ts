@@ -18,7 +18,7 @@ export class ProductService {
   getProducts(): Observable<IProduct[]> {
     console.log(localStorage.getItem('token'));
     let token = localStorage.getItem('token');
-    return this.http.get<IProduct[]>(`http://localhost:3000/products?token=${token}`)
+    return this.http.get<IProduct[]>(`http://localhost:3000/productos?token=${token}`)
         .pipe(map((res: any) => res.data));
   }
 

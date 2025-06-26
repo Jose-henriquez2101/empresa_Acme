@@ -18,6 +18,7 @@ import { WelcomeComponent } from './welcome/welcome.component';
 import { PageNotFoundComponent } from './page-not-found/page-not-found.component';
 import { RouterModule } from '@angular/router';
 import { LoginComponent } from './login/login.component';
+import { LoginGuard } from './login/login.guard';
 
 
 
@@ -44,15 +45,15 @@ registerLocaleData(localeEsCl, 'es-CL');
     HttpClientModule,
     ReactiveFormsModule,
     RouterModule.forRoot([
-      {path: 'product/product-list', component: ProductListComponent},
-      {path: 'welcome', component: WelcomeComponent},
+      {path: 'product/product-list', component: ProductListComponent, canActivate: [LoginGuard]},
+      {path: 'welcome', component: WelcomeComponent, canActivate: [LoginGuard]},
       {path: 'login', component: LoginComponent},
       {path: '', redirectTo: 'login', pathMatch: 'full'},
       {path: '**', component: PageNotFoundComponent},
       
     ])
   ],
-  providers: [{provide: LOCALE_ID, useValue: 'es-CL'}],
+  providers: [{provide: LOCALE_ID, useValue: 'es-CL'}, LoginGuard],
   bootstrap: [AppComponent]
 })
 export class AppModule { }
